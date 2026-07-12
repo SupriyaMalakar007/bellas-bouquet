@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
 import SearchBar from "../components/SearchBar";
 import CategoryFilter from "../components/CategoryFilter";
+import API_URL from "../services/api";
 
 function Shop() {
   const [search, setSearch] = useState("");
@@ -11,7 +12,7 @@ function Shop() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("https://bellas-bouquet.onrender.com/api/products")
+    fetch(`${API_URL}/products`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch((err) => console.error(err));

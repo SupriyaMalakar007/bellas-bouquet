@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../services/api";
 
 function AddProduct() {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ function AddProduct() {
     }
 
     try {
-      const response = await fetch("https://bellas-bouquet.onrender.com/api/products", {
+      const response = await fetch(`${API_URL}/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

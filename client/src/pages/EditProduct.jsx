@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import API_URL from "../services/api";
 
 function EditProduct() {
   const { id } = useParams();
@@ -15,7 +16,7 @@ function EditProduct() {
 
   // Load product from MySQL
   useEffect(() => {
-    fetch("https://bellas-bouquet.onrender.com/api/products")
+    fetch(`${API_URL}/products`)
       .then((res) => res.json())
       .then((data) => {
         const found = data.find((item) => item.id === Number(id));
@@ -54,7 +55,7 @@ function EditProduct() {
   const updateProduct = async () => {
     try {
       const response = await fetch(
-        `https://bellas-bouquet.onrender.com/api/products/${id}`,
+        `${API_URL}/products/${id}`,
         {
           method: "PUT",
           headers: {

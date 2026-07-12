@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import API_URL from "../services/api";
 
 function ManageProducts() {
   const [products, setProducts] = useState([]);
@@ -7,7 +8,7 @@ function ManageProducts() {
   // Load products from MySQL
   const fetchProducts = async () => {
     try {
-      const res = await fetch("https://bellas-bouquet.onrender.com/api/products");
+      const res = await fetch(`${API_URL}/products`);
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -29,7 +30,7 @@ function ManageProducts() {
 
     try {
       const res = await fetch(
-        `https://bellas-bouquet.onrender.com/api/products/${id}`,
+        `${API_URL}/products/${id}`,
         {
           method: "DELETE",
         }
