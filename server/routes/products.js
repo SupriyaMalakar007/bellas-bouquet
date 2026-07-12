@@ -1,132 +1,179 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db");
+const supabase = require("../config/supabase");
 
 // =====================
-// GET All Products
+// GET ALL PRODUCTS
 // =====================
-router.get("/", (req, res) => {
-  db.query("SELECT * FROM products", (err, results) => {
-    if (err) {
-      console.log("========== MYSQL ERROR ==========");
-      console.log(err);
-      console.log("================================");
+router.get("/", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*");
 
+    if (error) {
       return res.status(500).json({
         success: false,
-        message: err.sqlMessage,
-        error: err,
+        message: error.message,
       });
     }
 
-    res.json(results);
-  });
+    res.json(data);
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
 });
 
+
 // =====================
-// ADD Product
+// ADD PRODUCT
 // =====================
-router.post("/", (req, res) => {
-  const { name, price, category, description, image } = req.body;
+router.post("/", async (req, res) => {
 
-  console.log("Received Product:");
-  console.log(req.body);
+  const {
+    name,
+    price,
+    category,
+    description,
+    image
+  } = req.body;
 
-  const sql = `
-    INSERT INTO products
-    (name, price, category, description, image)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+  try {
 
-  db.query(
-    sql,
-    [name, price, category, description, image],
-    (err, result) => {
-      if (err) {
-        console.log("========== MYSQL ERROR ==========");
-        console.log(err);
-        console.log("================================");
+    const { data, error } = await supabase
+      .from("products")
+      .insert([
+        {
+          name,
+          price,
+          category,
+          description,
+          image
+        }
+      ])
+      .select();
 
-        return res.status(500).json({
-          success: false,
-          message: err.sqlMessage,
-          error: err,
-        });
-      }
-
-      res.status(201).json({
-        success: true,
-        message: "Bouquet Added Successfully 🌸",
-        id: result.insertId,
+    if (error) {
+      return res.status(500).json({
+        success:false,
+        message:error.message
       });
     }
-  );
+
+    res.status(201).json({
+      success:true,
+      message:"Bouquet Added Successfully 🌸",
+      product:data[0]
+    });
+
+  } catch(err){
+
+    res.status(500).json({
+      success:false,
+      message:err.message
+    });
+
+  }
 });
 
-// =====================
-// DELETE Product
-// =====================
-router.delete("/:id", (req, res) => {
-  db.query(
-    "DELETE FROM products WHERE id = ?",
-    [req.params.id],
-    (err) => {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          message: err.sqlMessage,
-        });
-      }
 
-      res.json({
-        success: true,
-        message: "Product deleted successfully",
+// =====================
+// DELETE PRODUCT
+// =====================
+router.delete("/:id", async(req,res)=>{
+
+  try{
+
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", req.params.id);
+
+
+    if(error){
+      return res.status(500).json({
+        success:false,
+        message:error.message
       });
     }
-  );
+
+
+    res.json({
+      success:true,
+      message:"Product deleted successfully"
+    });
+
+
+  }catch(err){
+
+    res.status(500).json({
+      success:false,
+      message:err.message
+    });
+
+  }
+
 });
 
+
 // =====================
-// UPDATE Product
+// UPDATE PRODUCT
 // =====================
-router.put("/:id", (req, res) => {
-  const { name, price, category, description, image } = req.body;
-  const id = req.params.id;
+router.put("/:id", async(req,res)=>{
 
-  const sql = `
-    UPDATE products
-    SET name=?, price=?, category=?, description=?, image=?
-    WHERE id=?
-  `;
+  const {
+    name,
+    price,
+    category,
+    description,
+    image
+  } = req.body;
 
-  db.query(
-    sql,
-    [name, price, category, description, image, id],
-    (err, result) => {
-      if (err) {
-        console.log("UPDATE ERROR:", err);
 
-        return res.status(500).json({
-          success: false,
-          message: err.sqlMessage,
-        });
-      }
+  try{
 
-      console.log("Rows Updated:", result.affectedRows);
+    const { data, error } = await supabase
+      .from("products")
+      .update({
+        name,
+        price,
+        category,
+        description,
+        image
+      })
+      .eq("id", req.params.id)
+      .select();
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-        });
-      }
 
-      res.json({
-        success: true,
-        message: "Product updated successfully",
+    if(error){
+      return res.status(500).json({
+        success:false,
+        message:error.message
       });
     }
-  );
+
+
+    res.json({
+      success:true,
+      message:"Product updated successfully",
+      product:data[0]
+    });
+
+
+  }catch(err){
+
+    res.status(500).json({
+      success:false,
+      message:err.message
+    });
+
+  }
+
 });
+
 
 module.exports = router;
