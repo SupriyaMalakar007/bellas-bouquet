@@ -15,7 +15,7 @@ function EditProduct() {
 
   // Load product from MySQL
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("https://bellas-bouquet.onrender.com/api/products")
       .then((res) => res.json())
       .then((data) => {
         const found = data.find((item) => item.id === Number(id));
@@ -54,7 +54,7 @@ function EditProduct() {
   const updateProduct = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/products/${id}`,
+        `https://bellas-bouquet.onrender.com/api/products/${id}`,
         {
           method: "PUT",
           headers: {

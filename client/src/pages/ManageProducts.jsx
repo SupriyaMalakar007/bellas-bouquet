@@ -7,7 +7,7 @@ function ManageProducts() {
   // Load products from MySQL
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/products");
+      const res = await fetch("https://bellas-bouquet.onrender.com/api/products");
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -29,7 +29,7 @@ function ManageProducts() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/products/${id}`,
+        `https://bellas-bouquet.onrender.com/api/products/${id}`,
         {
           method: "DELETE",
         }

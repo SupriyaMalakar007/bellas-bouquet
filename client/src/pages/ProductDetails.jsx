@@ -11,7 +11,7 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("https://bellas-bouquet.onrender.com/api/products")
       .then((res) => res.json())
       .then((data) => {
         const foundProduct = data.find(
